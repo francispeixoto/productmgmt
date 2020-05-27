@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  analytics_db:
+    image: mariadb
+    command: --max-allowed-packet=64MB
+    restart: always
+    volumes:
+      - analytics_db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=
+    env_file:
+      - ./analytics.env
+  analytics_app:
+    image: matomo:fpm-alpine
+    restart: always
+    links:
+      - analytics_db
+    volumes:
+#      - ./config:/var/www/html/config:rw
+#      - ./logs:/var/www/html/logs
+      - analytics_matomo:/var/www/html
+    environment:
+      - MATOMO_DATABASE_HOST=db
+    env_file:
+      - ./analytics.env
+  analytics_web:
+    image: nginx:alpine
+    restart: always
+    volumes:
+      - analytics_matomo:/var/www/html:ro
+      # see https://github.com/matomo-org/matomo-nginx
+      - ./matomo.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - 8080:80
+volumes:
+  analytics_db:
+  analytics_matomo:
