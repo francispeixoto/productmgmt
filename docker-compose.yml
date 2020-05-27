@@ -26,8 +26,6 @@ services:
     restart: always
     volumes:
       - analytics_db:/var/lib/mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=
     env_file:
       - ./analytics.env
   analytics_app:
@@ -39,8 +37,6 @@ services:
 #      - ./config:/var/www/html/config:rw
 #      - ./logs:/var/www/html/logs
       - analytics_matomo:/var/www/html
-    environment:
-      - MATOMO_DATABASE_HOST=analytics_db
     env_file:
       - ./analytics.env
   analytics_web:
