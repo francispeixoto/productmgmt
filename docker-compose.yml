@@ -1,15 +1,13 @@
 version: '3'
 
 services:
-
   feedback_db:
     restart: always
     image: postgres:9.6
     volumes:
-      - /var/fider/pg_data:/var/lib/postgresql/data
+      - feedback_data:/var/lib/postgresql/data
     env_file:
       - ./feedback.env
-
   feedback_app:
     restart: always
     image: getfider/fider:stable
@@ -44,10 +42,24 @@ services:
     restart: always
     volumes:
       - analytics_matomo:/var/www/html:ro
-      # see https://github.com/matomo-org/matomo-nginx
       - ./matomo.conf:/etc/nginx/conf.d/default.conf:ro
+    env_file: 
+      - ./blog.env
     ports:
       - 8080:80
+
+  blog_web:
+    image: ghost:3-alpine
+    restart: always
+    ports:
+      - 8090:2368
+    env_file: 
+      - ./blog.env
+  blog_db:
+    image: mysql:5.7
+    restart: always
+
 volumes:
   analytics_db:
   analytics_matomo:
+  feedback_data:
