@@ -1,6 +1,25 @@
 version: '3'
 
 services:
+
+  feedback_db:
+    restart: always
+    image: postgres:9.6
+    volumes:
+      - /var/fider/pg_data:/var/lib/postgresql/data
+    env_file:
+      - ./feedback.env
+
+  feedback_app:
+    restart: always
+    image: getfider/fider:stable
+    ports:
+      - "9999:3000"
+    env_file: 
+      - ./feedback.env
+    depends_on:
+      - feedback_db
+
   analytics_db:
     image: mariadb
     command: --max-allowed-packet=64MB
@@ -21,7 +40,7 @@ services:
 #      - ./logs:/var/www/html/logs
       - analytics_matomo:/var/www/html
     environment:
-      - MATOMO_DATABASE_HOST=db
+      - MATOMO_DATABASE_HOST=analytics_db
     env_file:
       - ./analytics.env
   analytics_web:
