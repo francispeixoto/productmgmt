@@ -2,6 +2,7 @@ version: '3'
 
 services:
   feedback_db:
+    container_name: feedback_db
     restart: always
     image: postgres:9.6
     volumes:
@@ -9,6 +10,7 @@ services:
     env_file:
       - ./feedback.env
   feedback_app:
+    container_name: feedback_app
     restart: always
     image: getfider/fider:stable
     ports:
@@ -19,6 +21,7 @@ services:
       - feedback_db
 
   analytics_db:
+    container_name: analytics_db
     image: mariadb
     command: --max-allowed-packet=64MB
     restart: always
@@ -27,6 +30,7 @@ services:
     env_file:
       - ./analytics.env
   analytics_app:
+    container_name: analytics_app
     image: matomo:fpm-alpine
     restart: always
     links:
@@ -38,6 +42,7 @@ services:
     env_file:
       - ./analytics.env
   analytics_web:
+    container_name: analytics_web
     image: nginx:alpine
     restart: always
     volumes:
@@ -49,6 +54,7 @@ services:
       - 8080:80
 
   blog_web:
+    container_name: blog_web
     image: ghost:3-alpine
     restart: always
     ports:
@@ -56,6 +62,7 @@ services:
     env_file: 
       - ./blog.env
   blog_db:
+    container_name: blog_db
     image: mysql:5.7
     restart: always
 
